@@ -6,7 +6,7 @@ import * as yaml from 'js-yaml';
 
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand(
-    'cleanArchitecture.createFeature',
+    'onionArchitecture.createFeature',
     async () => {
       // 1. Prompt for the feature name
       const featureNameInput = await vscode.window.showInputBox({

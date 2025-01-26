@@ -1,7 +1,9 @@
 {
-  "name": "logen-extension",
-  "displayName": "flutter-clean-architecture-generator",
-  "description": "Generate a clean Architecture folder structure and boilerplate for flutter projects.",
+  "name": "flutter-onion-architecture-generator",
+  "publisher": "LoggErn",
+  "displayName": "Flutter Onion Architecture Feature Generator",
+  "description": "Generate a Clean/Onion Architecture folder structure and boilerplate for flutter projects.",
+  "icon": "images/icon.png",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.96.0"
@@ -9,12 +11,18 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LoggErn/vscode_extensions_flutter.git"
+  },
+  "activationEvents": [
+  "onCommand:onionArchitecture.createFeature"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "cleanArchitecture.createFeature",
+        "command": "onionArchitecture.createFeature",
         "title": "Flutter Clean Architecture Extension"
       }
     ]
