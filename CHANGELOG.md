@@ -1,9 +1,10 @@
-# Change Log
+# Changelog
 
-All notable changes to the "logEn" extension will be documented in this file.
+## [0.0.2] - 2025-01-27
+- Added the ability to right-click a folder inside `lib` to create a new feature directly in that folder.
+- If no folder is selected, the feature still defaults to the `lib` directory.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
-
-- Initial release
+## [0.0.1] - 2025-01-20
+- Initial release with basic scaffolding for Clean Architecture:
+  - Creates `presentation`, `domain`, and `data` folders.
+  - Generates entity and repository boilerplate.

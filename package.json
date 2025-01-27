@@ -3,8 +3,8 @@
   "publisher": "LoggErn",
   "displayName": "Flutter Onion Architecture Feature Generator",
   "description": "Generate a Clean/Onion Architecture folder structure and boilerplate for flutter projects.",
-  "icon": "images/icon.png",
-  "version": "0.0.1",
+  "icon": "images/onion_icon.png",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.96.0"
   },
@@ -23,9 +23,18 @@
     "commands": [
       {
         "command": "onionArchitecture.createFeature",
-        "title": "Flutter Clean Architecture Extension"
+        "title": "Clean Architecture: Create feature"
+      }
+    ],
+    "menus": {
+    "explorer/context": [
+      {
+        "command": "onionArchitecture.createFeature",
+        "when": "explorerResourceIsFolder",
+        "group": "navigation"
       }
     ]
+  }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

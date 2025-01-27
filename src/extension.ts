@@ -7,7 +7,7 @@ import * as yaml from 'js-yaml';
 export function activate(context: vscode.ExtensionContext) {
   const disposable = vscode.commands.registerCommand(
     'onionArchitecture.createFeature',
-    async () => {
+    async (uri: vscode.Uri | undefined) => {
       // 1. Prompt for the feature name
       const featureNameInput = await vscode.window.showInputBox({
         prompt: 'Enter the feature name',
@@ -56,26 +56,18 @@ export function activate(context: vscode.ExtensionContext) {
           const pubspecContent = fs.readFileSync(pubspecPath, 'utf8');
           const pubspecDoc = yaml.load(pubspecContent) as any; // 'any' for quick usage
 
-          // Check if this project depends on Flutter
-          // Typically, a Flutter pubspec has something like:
-          //
-          // dependencies:
-          //   flutter:
-          //     sdk: flutter
-          //
-          // Or dev_dependencies:...
-          // So let's see if there's a "flutter" key in dependencies or dev_dependencies with sdk: "flutter".
+          // Check if flutter is a dependency or dev_dependency
           if (pubspecDoc?.dependencies?.flutter?.sdk === 'flutter') {
             isLikelyFlutterProject = true;
           } else if (pubspecDoc?.dev_dependencies?.flutter?.sdk === 'flutter') {
             isLikelyFlutterProject = true;
           }
-          // Another optional check: top-level 'flutter:' could also be present for assets, etc.
+          // Another optional check
           if (pubspecDoc?.flutter) {
             isLikelyFlutterProject = true;
           }
 
-          // Now check if "dartz" is declared in either dependencies or dev_dependencies
+          // Check if "dartz" is declared
           if (pubspecDoc?.dependencies?.dartz !== undefined) {
             hasDartzDependency = true;
           } else if (pubspecDoc?.dev_dependencies?.dartz !== undefined) {
@@ -113,22 +105,47 @@ export function activate(context: vscode.ExtensionContext) {
         );
       }
 
-      // 5. Create the feature folder (under "lib/")
-      const libDir = path.join(workspacePath, 'lib');
-      if (!fs.existsSync(libDir)) {
+      // 5. Determine where to create the feature folder
+      // By default, we use the lib folder.
+      let targetDirectory = path.join(workspacePath, 'lib');
+
+      // If the user invoked the command from a folder, and that folder is inside "lib/",
+      // use that folder instead.
+      if (uri?.fsPath) {
+        try {
+          const stat = fs.lstatSync(uri.fsPath);
+          if (stat.isDirectory()) {
+            // Check if it's within "lib"
+            const libPath = path.join(workspacePath, 'lib');
+            const relative = path.relative(libPath, uri.fsPath);
+
+            // If relative does NOT start with '..', it's inside "lib"
+            if (!relative.startsWith('..')) {
+              targetDirectory = uri.fsPath;
+            }
+          }
+        } catch (error) {
+          // If any error (e.g., no longer exists), we just fall back to "lib".
+        }
+      }
+
+      // Ensure lib/ exists at least:
+      if (!fs.existsSync(path.join(workspacePath, 'lib'))) {
         vscode.window.showWarningMessage(
           'No "lib" folder found. Creating one automatically.'
         );
-        fs.mkdirSync(libDir, { recursive: true });
+        fs.mkdirSync(path.join(workspacePath, 'lib'), { recursive: true });
       }
 
-      const featurePath = path.join(libDir, featureName);
+      // 6. Create the feature folder
+      const featurePath = path.join(targetDirectory, featureName);
 
       // If feature folder exists, prompt overwrite
       if (fs.existsSync(featurePath)) {
         const overwrite = await vscode.window.showWarningMessage(
-          `Feature "${featureName}" already exists. Overwrite?`,
-          'Yes', 'No'
+          `Feature "${featureName}" already exists in "${featurePath}". Overwrite?`,
+          'Yes',
+          'No'
         );
         if (overwrite !== 'Yes') {
           // User either chose No or cancelled
@@ -136,7 +153,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
       }
 
-      // 6. Create subfolders
+      // 7. Create subfolders
       const directories = [
         'presentation/bloc',
         'presentation/pages',
@@ -150,14 +167,14 @@ export function activate(context: vscode.ExtensionContext) {
       ];
 
       try {
-        directories.forEach(dir => {
+        directories.forEach((dir) => {
           fs.mkdirSync(path.join(featurePath, dir), { recursive: true });
         });
 
-        // 7. Generate boilerplate files
+        // 8. Generate boilerplate files
         generateBoilerplateFiles(featurePath, featureName);
 
-        // 8. Notify success
+        // 9. Notify success
         vscode.window.showInformationMessage(`Feature "${featureName}" created successfully!`);
       } catch (err) {
         vscode.window.showErrorMessage(
@@ -203,7 +220,7 @@ abstract class ${_toPascalCase(featureName)}Repository {
 function _toPascalCase(str: string): string {
   return str
     .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join('');
 }
 

@@ -12,10 +12,15 @@ A simple VS Code extension that helps you quickly scaffold a Clean Architecture 
 
 ## Usage
 
-1. **Open** your Flutter project in VS Code.
-2. **Press** <kbd>F5</kbd> to launch the extension development host (if testing locally) or install this extension from the Marketplace.
-3. **Open** the Command Palette (<kbd>Ctrl+Shift+P</kbd> on Windows/Linux, <kbd>Cmd+Shift+P</kbd> on macOS).
-4. **Run** `Create Clean Architecture Feature` and follow the prompts.
+### Demo 1: Right-Click on a Folder
+For the first approach, select the folder under `lib` where you want the new feature created. Right-click, then select **"Clean Architecture: Create feature"** from the context menu.
+
+![Demo 1 - Right-click folder](images/capture1.gif)
+
+### Demo 2: Use the Command Palette
+For the second approach, open the **Command Palette** (<kbd>Cmd+Shift+P</kbd> on macOS or <kbd>Ctrl+Shift+P</kbd> on Windows/Linux), type **"Clean Architecture: Create feature"**, then enter the feature name. This will create the feature folder directly under the `lib` directory.
+
+![Demo 2 - Command Palette](images/capture2.gif)
 
 ## Requirements
 
@@ -31,5 +36,4 @@ A simple VS Code extension that helps you quickly scaffold a Clean Architecture 
 ## Release Notes
 
 ### 0.0.1
-
 - Initial release: Basic scaffolding for folders and entity/repository boilerplate files.
